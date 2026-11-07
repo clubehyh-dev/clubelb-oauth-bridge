@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clube LB — conectando Google Ads…</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0b0b0b; color: #eee; display: grid; place-items: center; min-height: 100vh; margin: 0; }
+    p { opacity: .8; }
+  </style>
+</head>
+<body>
+  <p>Conectando ao Google Ads…</p>
+  <script>
+    // A HostGator bloqueia ?scope=https://… (Mod_Security). Este bridge
+    // roda fora da HostGator, tira o scope e manda só state+code ao painel.
+    (function () {
+      var dest = "https://painel.clubelb.com.br/oauth/google-ads/callback/";
+      var raw = (location.hash && location.hash.length > 1)
+        ? location.hash.slice(1)
+        : location.search.slice(1);
+      var src = new URLSearchParams(raw);
+      var out = new URL(dest);
+      // Só state/code — NUNCA scope/iss (HostGator Mod_Security → 406).
+      ["state", "code", "error", "error_description"].forEach(function (k) {
+        var v = src.get(k);
+        if (v) out.searchParams.set(k, v);
+      });
+      location.replace(out.toString());
+    })();
+  </script>
+</body>
+</html>
